@@ -1,5 +1,6 @@
 package com.search.preflight_assignment.controllers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.search.preflight_assignment.services.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class MainController {
     private MainService mainService;
 
     @RequestMapping("/search")
-    public String getQueryAndClusterName(@RequestParam("query") List<String> queryValues) {
-        String responseObject = mainService.generateResponse(queryValues);
-        return "hola";
+    public ResponseEntity<ObjectNode> getQueryAndClusterName(@RequestParam("query") List<String> queryValues) {
+        ObjectNode responseObject = mainService.generateResponse(queryValues);
+        return ResponseEntity.ok(responseObject);
     }
 }
