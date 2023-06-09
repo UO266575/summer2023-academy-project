@@ -1,13 +1,8 @@
-package entities;
+package com.search.preflight_assignment.domain;
 
 import java.util.List;
 
-public class RequestInfo {
-
-    public final List<String> query;
-
-    public final String clusterName;
-
+public record RequestInfo(List<String> query, String clusterName) {
 
     public RequestInfo(List<String> query, String clusterName) {
         this.clusterName = clusterName;
