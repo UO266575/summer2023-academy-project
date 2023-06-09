@@ -2,38 +2,36 @@ package com.search.preflight_assignment.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import entities.RequestInfo;
+import org.apache.http.HttpHost;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Service
 public class MainService {
 
-    public ObjectNode generateResponse(List<String> query) {
+    public RequestInfo generateResponseElasticClient(List<String> query) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            List<String> queryList = new ArrayList<>();
+            query.forEach(queryList::add);
 
-            ObjectNode jsonNode = objectMapper.createObjectNode();
+            return new RequestInfo(queryList, extractInformation(getPetitionInformationElasticClient()));
 
-            ArrayNode queryArrayNode = objectMapper.createArrayNode();
-            for (String q : query) {
-                queryArrayNode.add(q);
-            }
-
-            jsonNode.put("query", queryArrayNode);
-            jsonNode.put("clusterName", extractInformation(getPetitionInformation("http://localhost:9200/")));
-
-            return jsonNode;
         } catch (Exception e) {
             throw new RuntimeException("Failed to build JSON", e);
         }
@@ -48,20 +46,24 @@ public class MainService {
         }
     }
 
-    public JsonNode getPetitionInformation(String uri){
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(uri);
+    public JsonNode getPetitionInformationElasticClient(){
+        try {
+            RestHighLevelClient client = new RestHighLevelClient(
+                    RestClient.builder(new HttpHost("localhost", 9200, "http")));
 
-            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                String responseBody = EntityUtils.toString(response.getEntity());
+            Request request = new Request("GET", "/");
+            Response response = client.getLowLevelClient().performRequest(request);
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
+            String responseBody = EntityUtils.toString(response.getEntity());
 
-                return jsonNode;
-            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+            client.close();
+
+            return jsonNode;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to connect to URL: " + uri, e);
+            throw new RuntimeException("Failed to connect to Elasticsearch", e);
         }
     }
 }
