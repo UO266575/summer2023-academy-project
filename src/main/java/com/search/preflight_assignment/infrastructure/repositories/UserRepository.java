@@ -30,7 +30,7 @@ public class UserRepository implements UserAdapter {
 
     @Override
     public boolean updateUser(Long id, User user){
-        return users.put(getUserById(id).id(), user) != null;  //No sé si es redundante y aquí puede lanzar nullpointer
+        return users.put(id, user) != null;
     }
 
     @Override

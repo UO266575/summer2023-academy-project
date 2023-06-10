@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public class UserService {
 
-    public final UserAdapter userAdapter;
+    private final UserAdapter userAdapter;
 
     public UserService(UserAdapter userAdapter) {
         this.userAdapter = userAdapter;
