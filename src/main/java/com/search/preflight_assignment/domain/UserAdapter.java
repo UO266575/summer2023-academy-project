@@ -10,7 +10,7 @@ public interface UserAdapter {
 
     void addUser(User user);
 
-    boolean updateUser(Long id, User user);
+    void updateUser(Long id, User user);
 
     boolean deleteUser(Long id);
 }

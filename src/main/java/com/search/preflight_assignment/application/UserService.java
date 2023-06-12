@@ -32,7 +32,11 @@ public class UserService {
     }
 
     public boolean updateUser(Long id, User user) {
-        return userAdapter.updateUser(id, user);
+        if (getUserById(user.id()) != null) {
+            userAdapter.updateUser(id, user);
+            return true;
+        }
+        return false;
     }
 
     public boolean deleteUser(Long id) {

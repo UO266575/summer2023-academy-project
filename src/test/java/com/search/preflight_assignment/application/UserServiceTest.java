@@ -72,47 +72,47 @@ class UserServiceTest {
     }
 
     @Test
-    public void shouldAddUser(){
-        User user = new User(1L, "ton@ton.com", "Ton");
-
-        Mockito.when(userService.getUserById(user.id())).thenReturn(user);
-
-        boolean result = userService.addUser(user);
-
-        assertEquals(true, result);
-    }
-
-    @Test
     public void shouldntAddUser(){
         User user = new User(1L, "ton@ton.com", "Ton");
 
-        Mockito.when(userService.getUserById(user.id())).thenReturn(null);
+        Mockito.when(userRepository.getUserById(user.id())).thenReturn(user);
 
         boolean result = userService.addUser(user);
 
         assertEquals(false, result);
+    }
+
+    @Test
+    public void shouldAddUser(){
+        User user = new User(1L, "ton@ton.com", "Ton");
+
+        Mockito.when(userRepository.getUserById(user.id())).thenReturn(null);
+
+        boolean result = userService.addUser(user);
+
+        assertEquals(true, result);
     }
 
     @Test
     public void shouldUpdateUser(){
         User user = new User(1L, "ton@ton.com", "Ton");
 
-        Mockito.when(userRepository.updateUser(user.id(), user)).thenReturn(true);
+        Mockito.when(userRepository.getUserById(user.id())).thenReturn(null);
 
         boolean result = userService.updateUser(user.id(), user);
 
-        assertEquals(true, result);
+        assertEquals(false, result);
     }
 
     @Test
     public void shouldntUpdateUser(){
         User user = new User(1L, "ton@ton.com", "Ton");
 
-        Mockito.when(userRepository.updateUser(user.id(), user)).thenReturn(false);
+        Mockito.when(userRepository.getUserById(user.id())).thenReturn(user);
 
         boolean result = userService.updateUser(user.id(), user);
 
-        assertEquals(false, result);
+        assertEquals(true, result);
     }
 
     @Test

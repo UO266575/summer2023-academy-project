@@ -29,8 +29,8 @@ public class UserRepository implements UserAdapter {
     }
 
     @Override
-    public boolean updateUser(Long id, User user){
-        return users.put(id, user) != null;
+    public void updateUser(Long id, User user){
+        users.put(id, user);
     }
 
     @Override
